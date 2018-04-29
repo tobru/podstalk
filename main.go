@@ -10,6 +10,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	nats "github.com/nats-io/go-nats"
 )
 
 // PodInfo contains all interesting information about a pod
@@ -32,6 +34,7 @@ var (
 	ips     []string
 	client  *K8sClient
 	t       *template.Template
+	nc      *nats.Conn
 )
 
 func infoHandler(w http.ResponseWriter, r *http.Request) {
@@ -45,6 +48,7 @@ func infoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	p.Useragent = r.Header.Get("User-Agent")
+	nc.Publish("foo", []byte(r.Header.Get("User-Agent")))
 
 	err := t.Execute(w, p)
 	check(err)
@@ -52,6 +56,7 @@ func infoHandler(w http.ResponseWriter, r *http.Request) {
 
 func init() {
 	t = template.Must(template.New("index").Parse(htmlTemplate))
+	nc, _ = nats.Connect(getEnvOr("NATS_URL", "nats://localhost:4222"))
 	podInfo = PodInfo{
 		Name:           os.Getenv("POD_NAME"),
 		Namespace:      os.Getenv("POD_NAMESPACE"),
