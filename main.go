@@ -24,6 +24,7 @@ type PodInfo struct {
 	Now            string
 	Title          string
 	Siblings       []string
+	Useragent      string
 }
 
 var (
@@ -42,6 +43,8 @@ func infoHandler(w http.ResponseWriter, r *http.Request) {
 			p.Siblings = append(p.Siblings, pod.Metadata.Name)
 		}
 	}
+
+	p.Useragent = r.Header.Get("User-Agent")
 
 	err := t.Execute(w, p)
 	check(err)
