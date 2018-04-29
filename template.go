@@ -29,7 +29,7 @@ const htmlTemplate = `<!doctype html>
 <body>
   <main>
     <h1>Hi, I'm <strong>{{ .Name }}</strong>!</h1>
-    <h2>Your User Agent is <strong>{{ .Useragent }}</strong>
+    <h2>Your User Agent is <strong>{{ .Useragent }}</strong></h2>
     <p>
       I live in the
       <strong>{{ .Namespace }}</strong>
